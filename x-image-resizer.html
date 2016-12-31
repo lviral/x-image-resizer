@@ -1,0 +1,52 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+`x-image-resizer`
+Resize an image
+
+@demo demo/index.html 
+-->
+
+<dom-module id="x-image-resizer">
+  <script>
+    Polymer({
+
+      is: 'x-image-resizer',
+
+      properties: {
+        src: {
+            type: String,
+            observer: '_change'
+        },
+        resized: String,
+        width: Number,
+        height: Number
+      },
+      _change: function() {
+          var image = new Image();
+          image.onload = ()=> {
+              //Polymer.dom(this.root).appendChild(image);
+              var width = this.width,
+              height = this.height;
+              const promise = new Promise((resolve, reject) => {
+                  canvas = document.createElement("canvas");
+                  canvas.width = width;
+                  canvas.height = height;
+                  canvas.getContext("2d").drawImage(image, 0, 0, width, height);
+                  resolve(canvas.toDataURL());
+              });
+              promise.then((res)=>{
+                  this.resized = res;
+                  /*var imageResized = new Image();
+                  imageResized.onload = ()=> {
+                      Polymer.dom(this.root).appendChild(imageResized);
+                  };
+                  imageResized.src = this.resized;*/
+              });
+          };
+          image.src = this.src; 
+      }
+
+    });
+  </script>
+</dom-module>
